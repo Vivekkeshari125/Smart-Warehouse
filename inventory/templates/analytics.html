@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="mb-4">
+        <h2 class="fw-bold">Analytics</h2>
+        <p class="text-muted">
+            Warehouse inventory and order analytics
+        </p>
+    </div>
+
+
+    <!-- SUMMARY CARDS -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Total Products</p>
+                    <h3 class="fw-bold">
+                        {{ total_products }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Total Stock</p>
+                    <h3 class="fw-bold">
+                        {{ total_stock }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Low Stock</p>
+                    <h3 class="fw-bold text-warning">
+                        {{ low_stock_count }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Out of Stock</p>
+                    <h3 class="fw-bold text-danger">
+                        {{ out_of_stock_count }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- CHARTS -->
+
+    <div class="row g-4">
+
+
+        <!-- INVENTORY STATUS -->
+
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <h5 class="fw-bold mb-3">
+                        Inventory Status
+                    </h5>
+
+                    <canvas id="inventoryChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- STOCK MOVEMENT -->
+
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <h5 class="fw-bold mb-3">
+                        Stock Movement
+                    </h5>
+
+                    <canvas id="stockChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ORDER STATUS -->
+
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <h5 class="fw-bold mb-3">
+                        Order Statistics
+                    </h5>
+
+                    <canvas id="orderChart"></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- CHART.JS -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+
+const totalProducts =
+    Number("{{ total_products }}");
+
+const lowStock =
+    Number("{{ low_stock_count }}");
+
+const outOfStock =
+    Number("{{ out_of_stock_count }}");
+
+const inStock =
+    totalProducts - lowStock - outOfStock;
+
+
+/* INVENTORY CHART */
+
+const inventoryChart =
+    document.getElementById("inventoryChart");
+
+new Chart(
+    inventoryChart,
+    {
+        type: "doughnut",
+
+        data: {
+
+            labels: [
+                "In Stock",
+                "Low Stock",
+                "Out of Stock"
+            ],
+
+            datasets: [
+
+                {
+                    data: [
+                        inStock,
+                        lowStock,
+                        outOfStock
+                    ]
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            plugins: {
+
+                legend: {
+
+                    position: "bottom"
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* STOCK MOVEMENT */
+
+const stockChart =
+    document.getElementById("stockChart");
+
+new Chart(
+    stockChart,
+    {
+
+        type: "bar",
+
+        data: {
+
+            labels: [
+                "Stock In",
+                "Stock Out",
+                "Current Stock"
+            ],
+
+            datasets: [
+
+                {
+
+                    label: "Quantity",
+
+                    data: [
+
+                        Number("{{ stock_in_total }}"),
+
+                        Number("{{ stock_out_total }}"),
+
+                        Number("{{ total_stock }}")
+
+                    ]
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+/* ORDER STATUS */
+
+const orderChart =
+    document.getElementById("orderChart");
+
+new Chart(
+    orderChart,
+    {
+
+        type: "pie",
+
+        data: {
+
+            labels: [
+
+                "Pending",
+                "Processing",
+                "Completed",
+                "Cancelled"
+
+            ],
+
+            datasets: [
+
+                {
+
+                    data: [
+
+                        Number("{{ pending_orders }}"),
+
+                        Number("{{ processing_orders }}"),
+
+                        Number("{{ completed_orders }}"),
+
+                        Number("{{ cancelled_orders }}")
+
+                    ]
+
+                }
+
+            ]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            plugins: {
+
+                legend: {
+
+                    position: "bottom"
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+</script>
+
+
+{% endblock %}

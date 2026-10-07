@@ -1,0 +1,198 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>Alerts</h2>
+
+            <p class="text-muted">
+                Monitor low-stock and out-of-stock inventory alerts.
+            </p>
+
+        </div>
+
+        <span class="badge bg-danger fs-6">
+            {{ alerts|length }} Alerts
+        </span>
+
+    </div>
+
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-dark">
+
+                        <tr>
+
+                            <th>Alert ID</th>
+
+                            <th>Product</th>
+
+                            <th>Alert Type</th>
+
+                            <th>Message</th>
+
+                            <th>Status</th>
+
+                            <th>Date & Time</th>
+
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for alert in alerts %}
+
+                        <tr>
+
+                            <td>
+                                #{{ alert.alert_id }}
+                            </td>
+
+
+                            <td>
+
+                                <strong>
+                                    {{ alert.product.product_name }}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if alert.alert_type == "Out of Stock" %}
+
+                                    <span class="badge bg-danger">
+                                        Out of Stock
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Low Stock
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+                                {{ alert.message }}
+                            </td>
+
+
+                            <td>
+
+                                {% if alert.status == "Unread" %}
+
+                                    <span class="badge bg-danger">
+                                        Unread
+                                    </span>
+
+                                {% elif alert.status == "Read" %}
+
+                                    <span class="badge bg-primary">
+                                        Read
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-success">
+                                        Resolved
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+                                {{ alert.timestamp|date:"d M Y, h:i A" }}
+                            </td>
+
+
+                            <td>
+
+                                {% if alert.status == "Unread" %}
+
+                                    <a
+                                        href="/alerts/read/{{ alert.alert_id }}/"
+                                        class="btn btn-sm btn-outline-primary">
+
+                                        Mark as Read
+
+                                    </a>
+
+                                {% endif %}
+
+
+                                {% if alert.status != "Resolved" %}
+
+                                    <a
+                                        href="/alerts/resolve/{{ alert.alert_id }}/"
+                                        class="btn btn-sm btn-outline-success">
+
+                                        Resolve
+
+                                    </a>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                class="text-center py-5">
+
+                                <h5 class="text-success">
+                                    No Alerts
+                                </h5>
+
+                                <p class="text-muted mb-0">
+                                    There are currently no inventory alerts.
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

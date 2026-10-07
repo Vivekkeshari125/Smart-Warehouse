@@ -1,0 +1,406 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <!-- Dashboard Header -->
+    <div class="mb-4">
+
+        <h2 class="fw-bold">
+            Dashboard
+        </h2>
+
+        <p class="text-muted">
+            Smart Warehouse Inventory Management Overview
+        </p>
+
+    </div>
+
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+
+        <!-- Total Products -->
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Total Products
+                    </h6>
+
+                    <h2 class="fw-bold">
+                        {{ total_products }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Total Stock -->
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Total Stock
+                    </h6>
+
+                    <h2 class="fw-bold text-primary">
+                        {{ total_stock }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Low Stock -->
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Low Stock Items
+                    </h6>
+
+                    <h2 class="fw-bold text-warning">
+                        {{ low_stock }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Total Orders -->
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Total Orders
+                    </h6>
+
+                    <h2 class="fw-bold text-success">
+                        {{ total_orders }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Order Statistics -->
+    <div class="row g-4 mb-4">
+
+        <!-- Pending Orders -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Pending Orders
+                    </h6>
+
+                    <h3 class="fw-bold text-warning">
+                        {{ pending_orders }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Processing Orders -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Processing Orders
+                    </h6>
+
+                    <h3 class="fw-bold text-primary">
+                        {{ processing_orders }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Completed Orders -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Completed Orders
+                    </h6>
+
+                    <h3 class="fw-bold text-success">
+                        {{ completed_orders }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Inventory Alerts -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <div>
+
+                    <h4 class="fw-bold mb-1">
+                        Inventory Alerts
+                    </h4>
+
+                    <p class="text-muted mb-0">
+                        Latest unread warehouse alerts
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <span class="badge bg-danger fs-6 me-2">
+                        {{ unread_alerts }} Unread
+                    </span>
+
+                    <a
+                        href="/alerts/"
+                        class="btn btn-sm btn-outline-dark">
+
+                        View All Alerts
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Alert Table -->
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-dark">
+
+                        <tr>
+
+                            <th>Product</th>
+
+                            <th>Alert Type</th>
+
+                            <th>Current Stock</th>
+
+                            <th>Minimum Stock</th>
+
+                            <th>Status</th>
+
+                            <th>Date</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for alert in recent_alerts %}
+
+                        {% if alert.status == "Unread" %}
+
+                        <tr>
+
+                            <td>
+
+                                <strong>
+                                    {{ alert.product.product_name }}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if alert.alert_type == "Out of Stock" %}
+
+                                    <span class="badge bg-danger">
+                                        Out of Stock
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Low Stock
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <strong>
+                                    {{ alert.product.quantity }}
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+                                {{ alert.product.minimum_stock }}
+                            </td>
+
+
+                            <td>
+
+                                <span class="badge bg-danger">
+                                    Unread
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                {{ alert.timestamp|date:"d M Y, h:i A" }}
+
+                            </td>
+
+                        </tr>
+
+                        {% endif %}
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                class="text-center py-5">
+
+                                <h5 class="text-success">
+                                    No Unread Alerts
+                                </h5>
+
+                                <p class="text-muted mb-0">
+                                    All inventory alerts are currently handled.
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Quick Actions -->
+    <div class="card shadow-sm border-0 mb-5">
+
+        <div class="card-body">
+
+            <h4 class="fw-bold mb-3">
+                Quick Actions
+            </h4>
+
+            <div class="d-flex flex-wrap gap-2">
+
+                <a
+                    href="/products/add/"
+                    class="btn btn-primary">
+
+                    + Add Product
+
+                </a>
+
+
+                <a
+                    href="/stock-in/"
+                    class="btn btn-success">
+
+                    + Stock In
+
+                </a>
+
+
+                <a
+                    href="/stock-out/"
+                    class="btn btn-danger">
+
+                    - Stock Out
+
+                </a>
+
+
+                <a
+                    href="/orders/add/"
+                    class="btn btn-dark">
+
+                    + Create Order
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

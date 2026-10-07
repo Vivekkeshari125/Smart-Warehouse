@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="mb-4">
+
+        <h2>Stock Out</h2>
+
+        <p class="text-muted">
+            Remove stock from warehouse inventory.
+        </p>
+
+    </div>
+
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-4">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Product
+                    </label>
+
+                    <select
+                        name="product_id"
+                        class="form-select"
+                        required>
+
+                        <option value="">
+                            Select Product
+                        </option>
+
+                        {% for product in products %}
+
+                        <option value="{{ product.id }}">
+                            {{ product.product_name }}
+                            - Current Stock: {{ product.quantity }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Quantity to Remove
+                    </label>
+
+                    <input
+                        type="number"
+                        name="quantity"
+                        class="form-control"
+                        placeholder="Enter quantity"
+                        min="1"
+                        required>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Destination / Order
+                    </label>
+
+                    <input
+                        type="text"
+                        name="destination"
+                        class="form-control"
+                        placeholder="Enter destination or order">
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Reference Number
+                    </label>
+
+                    <input
+                        type="text"
+                        name="reference"
+                        class="form-control"
+                        placeholder="Example: SO-001">
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Reason
+                    </label>
+
+                    <input
+                        type="text"
+                        name="reason"
+                        class="form-control"
+                        placeholder="Enter reason">
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Notes
+                    </label>
+
+                    <textarea
+                        name="notes"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Enter additional notes"></textarea>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-danger">
+
+                    Remove Stock
+
+                </button>
+
+
+                <a
+                    href="/inventory/"
+                    class="btn btn-secondary">
+
+                    Cancel
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

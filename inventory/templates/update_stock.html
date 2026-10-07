@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="mb-4">
+        <h2>Update Stock</h2>
+
+        <p class="text-muted">
+            Update the current stock quantity of the selected product.
+        </p>
+    </div>
+
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-4">
+
+            <div class="mb-4">
+
+                <h5 class="mb-1">
+                    {{ product.product_name }}
+                </h5>
+
+                <p class="text-muted mb-0">
+                    Category: {{ product.category }}
+                </p>
+
+            </div>
+
+
+            <div class="alert alert-light border">
+
+                <strong>Current Stock:</strong>
+                {{ product.quantity }}
+
+                <br>
+
+                <strong>Minimum Stock:</strong>
+                {{ product.minimum_stock }}
+
+            </div>
+
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        New Stock Quantity
+                    </label>
+
+                    <input
+                        type="number"
+                        name="quantity"
+                        class="form-control"
+                        value="{{ product.quantity }}"
+                        min="0"
+                        required>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    Update Stock
+
+                </button>
+
+
+                <a
+                    href="/inventory/"
+                    class="btn btn-secondary">
+
+                    Cancel
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,670 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- PAGE HEADER -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold">Reports</h2>
+
+            <p class="text-muted mb-0">
+                Warehouse inventory and transaction reports
+            </p>
+        </div>
+
+        <button
+            onclick="window.print()"
+            class="btn btn-dark"
+        >
+            Print Report
+        </button>
+
+    </div>
+
+
+    <!-- REPORT SUMMARY -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Total Products
+                    </p>
+
+                    <h3 class="fw-bold">
+                        {{ products|length }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Low Stock
+                    </p>
+
+                    <h3 class="fw-bold text-warning">
+                        {{ low_stock_products|length }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Out of Stock
+                    </p>
+
+                    <h3 class="fw-bold text-danger">
+                        {{ out_of_stock_products|length }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Transactions
+                    </p>
+
+                    <h3 class="fw-bold">
+                        {{ transactions|length }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- INVENTORY REPORT -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <h5 class="fw-bold mb-0">
+                    Current Inventory Report
+                </h5>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Product</th>
+
+                            <th>Category</th>
+
+                            <th>Quantity</th>
+
+                            <th>Minimum Stock</th>
+
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for product in products %}
+
+                        <tr>
+
+                            <td>
+                                {{ product.id }}
+                            </td>
+
+                            <td class="fw-semibold">
+                                {{ product.product_name }}
+                            </td>
+
+                            <td>
+                                {{ product.category }}
+                            </td>
+
+                            <td>
+                                {{ product.quantity }}
+                            </td>
+
+                            <td>
+                                {{ product.minimum_stock }}
+                            </td>
+
+                            <td>
+
+                                {% if product.quantity == 0 %}
+
+                                    <span class="badge bg-danger">
+                                        Out of Stock
+                                    </span>
+
+                                {% elif product.quantity < product.minimum_stock %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Low Stock
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-success">
+                                        In Stock
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="6"
+                                class="text-center text-muted"
+                            >
+                                No products available.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- LOW STOCK REPORT -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="fw-bold mb-3">
+                Low Stock Report
+            </h5>
+
+
+            <div class="table-responsive">
+
+                <table class="table table-hover">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Product</th>
+
+                            <th>Category</th>
+
+                            <th>Current Stock</th>
+
+                            <th>Minimum Level</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for product in low_stock_products %}
+
+                        <tr>
+
+                            <td>
+                                {{ product.product_name }}
+                            </td>
+
+                            <td>
+                                {{ product.category }}
+                            </td>
+
+                            <td class="text-warning fw-bold">
+                                {{ product.quantity }}
+                            </td>
+
+                            <td>
+                                {{ product.minimum_stock }}
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="4"
+                                class="text-center text-muted"
+                            >
+                                No low-stock products.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- OUT OF STOCK REPORT -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="fw-bold mb-3">
+                Out of Stock Report
+            </h5>
+
+
+            <div class="table-responsive">
+
+                <table class="table table-hover">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Product</th>
+
+                            <th>Category</th>
+
+                            <th>Minimum Stock</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for product in out_of_stock_products %}
+
+                        <tr>
+
+                            <td class="fw-semibold">
+                                {{ product.product_name }}
+                            </td>
+
+                            <td>
+                                {{ product.category }}
+                            </td>
+
+                            <td>
+                                {{ product.minimum_stock }}
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="3"
+                                class="text-center text-muted"
+                            >
+                                No out-of-stock products.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STOCK TRANSACTION REPORT -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="fw-bold mb-3">
+                Stock Transaction Report
+            </h5>
+
+
+            <div class="table-responsive">
+
+                <table class="table table-hover">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Product</th>
+
+                            <th>Type</th>
+
+                            <th>Quantity</th>
+
+                            <th>Previous</th>
+
+                            <th>Updated</th>
+
+                            <th>Reference</th>
+
+                            <th>Date</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for transaction in transactions %}
+
+                        <tr>
+
+                            <td>
+                                {{ transaction.transaction_id }}
+                            </td>
+
+                            <td>
+                                {{ transaction.product.product_name }}
+                            </td>
+
+                            <td>
+
+                                {% if transaction.transaction_type == "Stock In" %}
+
+                                    <span class="badge bg-success">
+                                        Stock In
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-danger">
+                                        Stock Out
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {{ transaction.quantity }}
+                            </td>
+
+                            <td>
+                                {{ transaction.previous_quantity }}
+                            </td>
+
+                            <td>
+                                {{ transaction.updated_quantity }}
+                            </td>
+
+                            <td>
+                                {{ transaction.reference|default:"-" }}
+                            </td>
+
+                            <td>
+                                {{ transaction.timestamp|date:"d M Y, H:i" }}
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="8"
+                                class="text-center text-muted"
+                            >
+                                No transactions available.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ORDER REPORT -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="fw-bold mb-3">
+                Order Report
+            </h5>
+
+
+            <div class="table-responsive">
+
+                <table class="table table-hover">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Order ID</th>
+
+                            <th>Customer</th>
+
+                            <th>Product</th>
+
+                            <th>Quantity</th>
+
+                            <th>Status</th>
+
+                            <th>Total</th>
+
+                            <th>Date</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for order in orders %}
+
+                        <tr>
+
+                            <td>
+                                #{{ order.order_id }}
+                            </td>
+
+                            <td>
+                                {{ order.customer }}
+                            </td>
+
+                            <td>
+                                {% if order.product %}
+                                    {{ order.product.product_name }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ order.quantity }}
+                            </td>
+
+                            <td>
+
+                                {% if order.status == "Completed" %}
+
+                                    <span class="badge bg-success">
+                                        Completed
+                                    </span>
+
+                                {% elif order.status == "Processing" %}
+
+                                    <span class="badge bg-primary">
+                                        Processing
+                                    </span>
+
+                                {% elif order.status == "Cancelled" %}
+
+                                    <span class="badge bg-danger">
+                                        Cancelled
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Pending
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                ₹{{ order.total }}
+                            </td>
+
+                            <td>
+                                {{ order.date|date:"d M Y, H:i" }}
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                class="text-center text-muted"
+                            >
+                                No orders available.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- PRINT CSS -->
+
+<style>
+
+@media print {
+
+    .btn {
+        display: none !important;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+
+    body {
+        background: white !important;
+    }
+
+}
+
+</style>
+
+{% endblock %}

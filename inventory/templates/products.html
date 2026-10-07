@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- Header -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold">
+                Product Management
+            </h2>
+
+            <p class="text-muted mb-0">
+                Manage and search warehouse products
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a
+                href="{% url 'product_search' %}"
+                class="btn btn-outline-primary"
+            >
+                🔎 DSA Product Search
+            </a>
+
+            <a
+                href="{% url 'add_product' %}"
+                class="btn btn-primary"
+            >
+                + Add Product
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Search and Filter -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <form method="GET">
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-5">
+
+                        <label class="form-label fw-semibold">
+                            Search Product
+                        </label>
+
+                        <input
+                            type="text"
+                            name="search"
+                            class="form-control"
+                            placeholder="Search by name, category or ID"
+                            value="{{ search }}"
+                        >
+
+                    </div>
+
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-semibold">
+                            Stock Status
+                        </label>
+
+                        <select
+                            name="status"
+                            class="form-select"
+                        >
+
+                            <option
+                                value=""
+                                {% if status == "" %}selected{% endif %}
+                            >
+                                All
+                            </option>
+
+                            <option
+                                value="in_stock"
+                                {% if status == "in_stock" %}selected{% endif %}
+                            >
+                                In Stock
+                            </option>
+
+                            <option
+                                value="low_stock"
+                                {% if status == "low_stock" %}selected{% endif %}
+                            >
+                                Low Stock
+                            </option>
+
+                            <option
+                                value="out_of_stock"
+                                {% if status == "out_of_stock" %}selected{% endif %}
+                            >
+                                Out of Stock
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-semibold">
+                            Sort By
+                        </label>
+
+                        <select
+                            name="sort"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                Default
+                            </option>
+
+                            <option
+                                value="name_asc"
+                                {% if sort_by == "name_asc" %}selected{% endif %}
+                            >
+                                Name A-Z
+                            </option>
+
+                            <option
+                                value="name_desc"
+                                {% if sort_by == "name_desc" %}selected{% endif %}
+                            >
+                                Name Z-A
+                            </option>
+
+                            <option
+                                value="quantity_asc"
+                                {% if sort_by == "quantity_asc" %}selected{% endif %}
+                            >
+                                Quantity Low-High
+                            </option>
+
+                            <option
+                                value="quantity_desc"
+                                {% if sort_by == "quantity_desc" %}selected{% endif %}
+                            >
+                                Quantity High-Low
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-1">
+
+                        <button
+                            type="submit"
+                            class="btn btn-dark w-100"
+                        >
+                            Go
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Product Table -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <h5 class="fw-bold mb-0">
+                    Product Inventory
+                </h5>
+
+                <span class="badge bg-primary">
+                    {{ products|length }} Products
+                </span>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Product Name</th>
+
+                            <th>Category</th>
+
+                            <th>Quantity</th>
+
+                            <th>Minimum Stock</th>
+
+                            <th>Status</th>
+
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for product in products %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    #{{ product.id }}
+                                </strong>
+                            </td>
+
+
+                            <td>
+                                {{ product.product_name }}
+                            </td>
+
+
+                            <td>
+                                {{ product.category }}
+                            </td>
+
+
+                            <td>
+                                {{ product.quantity }}
+                            </td>
+
+
+                            <td>
+                                {{ product.minimum_stock }}
+                            </td>
+
+
+                            <td>
+
+                                {% if product.quantity == 0 %}
+
+                                    <span class="badge bg-danger">
+                                        Out of Stock
+                                    </span>
+
+                                {% elif product.quantity < product.minimum_stock %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        Low Stock
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-success">
+                                        In Stock
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <a
+                                    href="{% url 'update_stock' product.id %}"
+                                    class="btn btn-sm btn-outline-primary"
+                                >
+                                    Update Stock
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                class="text-center text-muted py-4"
+                            >
+                                No products found.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- DSA Information -->
+
+    <div class="card shadow-sm border-0 mt-4">
+
+        <div class="card-body">
+
+            <h5 class="fw-bold">
+                DSA Integration
+            </h5>
+
+            <p class="text-muted mb-2">
+                Product management uses searching and sorting
+                algorithms for efficient inventory operations.
+            </p>
+
+            <div class="row">
+
+                <div class="col-md-4">
+
+                    <div class="p-3 bg-light rounded">
+
+                        <strong>Hashing</strong>
+
+                        <br>
+
+                        <small class="text-muted">
+                            Fast Product ID lookup
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="p-3 bg-light rounded">
+
+                        <strong>Searching</strong>
+
+                        <br>
+
+                        <small class="text-muted">
+                            Find products quickly
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="p-3 bg-light rounded">
+
+                        <strong>Sorting</strong>
+
+                        <br>
+
+                        <small class="text-muted">
+                            Sort by name and quantity
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
